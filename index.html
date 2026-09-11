@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Glydn — Translatör</title>
+  <link rel="icon" href="assets/logo/Glydnlogo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="styles/main.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+<div class="ambient ambient-3"></div>
+
+<div class="app">
+
+  <!-- ══ TOPBAR ══════════════════════════════════════════════ -->
+  <header class="topbar">
+      <div class="logo-group">
+<div class="logo-icon">
+  <svg width="36" height="36" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 95 20 A 55 55 0 1 0 95 100" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 55 60 L 90 60" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="90" cy="60" r="6" fill="#5DCAA5"/>
+    <path d="M 90 60 Q 108 44 116 28" fill="none" stroke="#9FE1CB" stroke-width="2.5" stroke-linecap="round" opacity="0.75"/>
+    <circle cx="116" cy="28" r="3.5" fill="#9FE1CB" opacity="0.75"/>
+  </svg>
+</div>
+  <div class="logo-wordmark">
+    <span class="logo-name">Glydn</span>
+    <span class="logo-sub" id="logoSubText">Translator</span>
+  </div>
+</div>
+
+    <div class="topbar-right">
+      <div class="pill-badge">beta</div>
+      <button class="icon-btn" id="settingsToggle" title="Ayarlar">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="8" cy="8" r="2.5"/>
+          <path d="M8 1.5v1.8M8 12.7v1.8M1.5 8h1.8M12.7 8h1.8M3.2 3.2l1.27 1.27M11.53 11.53l1.27 1.27M3.2 12.8l1.27-1.27M11.53 4.47l1.27-1.27"/>
+        </svg>
+      </button>
+
+      <button class="icon-btn info-btn" onclick="window.location.href='information.html?lang=' + currentLang">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="8" r="7"/>
+      <path d="M8 11V8M8 5h.01"/>
+    </svg>
+  </button>
+    </div>
+  </header>
+
+  <!-- ══ WORKSPACE ═══════════════════════════════════════════ -->
+  <main class="workspace">
+
+    <!-- SOL: KAYNAK -->
+    <div class="editor-panel" id="srcPanel">
+      <div class="panel-glow"></div>
+      <div class="panel-header">
+        <button class="lang-btn" id="srcLangBtn" onclick="openPicker('source')">
+          <div class="lang-btn-logo" id="srcLogo"></div>
+          <div class="lang-btn-info">
+            <span class="lang-btn-label" id="srcLangLabel">Kaynak Dil</span>
+            <span class="lang-btn-name" id="srcLangName">Python</span>
+          </div>
+          <div class="lang-btn-chevron">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 4l4 4 4-4"/></svg>
+          </div>
+        </button>
+        <div class="panel-actions">
+          <button class="action-btn" title="Dosya Yükle" id="uploadBtn">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2.5 11.5V10a1 1 0 011-1h7a1 1 0 011 1v1.5"/><path d="M7 1.5v6M4.5 4l2.5-2.5L9.5 4"/>
+            </svg>
+          </button>
+          <button class="action-btn run-btn" id="srcRunBtn" title="Kodu Çalıştır" onclick="toggleRun('src')">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M3 2.5l8 4.5-8 4.5z" stroke-width="1.5" fill="currentColor" stroke="none"/>
+            </svg>
+          </button>
+          <button class="action-btn" title="Temizle" onclick="clearSrc()">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M2.5 4.5h9M5 4.5V3a.5.5 0 01.5-.5h3a.5.5 0 01.5.5v1.5M6 7v2.5M8 7v2.5M3.5 4.5l.5 7h6l.5-7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="line-nums" id="srcLineNums"></div>
+        <textarea class="code-area" id="srcCode"
+            placeholder="# Kodunuzu buraya yazın veya yapıştırın..."
+            ...></textarea>
+      </div>
+      <div class="panel-footer">
+        <div class="footer-meta">
+          <span class="meta-chip">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1h8M1 5h5M1 9h7"/></svg>
+            <span id="srcLines">0 satır</span>
+          </span>
+          <span class="meta-chip">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="8" height="8" rx="1"/><path d="M3 3.5h4M3 6.5h2"/></svg>
+            <span id="srcChars">0 kar.</span>
+          </span>
+        </div>
+        <span class="meta-chip source-footer" style="color:var(--text-hint)">kaynak</span>
+      </div>
+    </div>
+
+    <!-- ORTA -->
+    <div class="middle-col">
+      <button class="swap-btn" onclick="swapLanguages()" title="Dilleri Değiştir">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M10.5 2.5l3 3-3 3M2.5 5.5h11M5.5 13.5l-3-3 3-3M13.5 10.5H2.5"/>
+        </svg>
+      </button>
+      <button class="translate-btn" id="translateBtn" onclick="runTranslation()" title="Çevir (Ctrl+Enter)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 10h12M12 6l4 4-4 4"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- SAĞ: HEDEF -->
+    <div class="editor-panel panel-target" id="tgtPanel">
+      <div class="panel-glow"></div>
+      <div class="panel-header">
+        <button class="lang-btn" id="tgtLangBtn" onclick="openPicker('target')">
+          <div class="lang-btn-logo" id="tgtLogo"></div>
+          <div class="lang-btn-info">
+            <span class="lang-btn-label" id="tgtLangLabel">Hedef Dil</span>
+            <span class="lang-btn-name" id="tgtLangName">Rust</span>
+          </div>
+          <div class="lang-btn-chevron">
+            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 4l4 4 4-4"/></svg>
+          </div>
+        </button>
+        <div class="panel-actions">
+          <button class="action-btn run-btn" id="tgtRunBtn" title="Kodu Çalıştır" onclick="toggleRun('tgt')">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M3 2.5l8 4.5-8 4.5z" stroke-width="1.5" fill="currentColor" stroke="none"/>
+            </svg>
+          </button>
+          <button class="action-btn" title="Kopyala" onclick="copyOutput()">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <rect x="4.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M2.5 9.5V2.5a1 1 0 011-1h7"/>
+            </svg>
+          </button>
+          <button class="action-btn" title="İndir" onclick="downloadOutput()">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <path d="M7 1.5v7M4.5 6l2.5 2.5L9.5 6M2.5 11h9"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="line-nums" id="tgtLineNums"></div>
+        <textarea class="code-area" id="tgtCode"
+        placeholder="// Çevrilmiş kod burada görünecek..."
+        ...></textarea>
+      </div>
+      <div class="panel-footer">
+        <div class="footer-meta">
+          <span class="meta-chip">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1h8M1 5h5M1 9h7"/></svg>
+            <span id="tgtLines">0 satır</span>
+          </span>
+        </div>
+        <span class="meta-chip target-footer" style="color:var(--text-hint)">hedef</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══ TEK RUN PANEL (TERMINAL) - TAM GENİŞLİK ═══════════════ -->
+  <div class="run-panel-wrap" id="runPanelWrap">
+    <div class="run-panel">
+      <div class="run-header">
+        <div class="run-header-left">
+          <span class="run-label" id="runLabel">Çıktı</span>
+          <span class="run-lang-badge" id="runLangBadge">Python</span>
+        </div>
+        <button class="run-close-btn" onclick="closeRun()">✕</button>
+      </div>
+      <div class="run-output" id="runOutput">
+        <div class="log-line info">
+          <span class="log-time">--:--:--</span>
+          <span class="log-icon">▶</span>
+          <span class="log-message" id="runHintText">Çalıştırmak için ▶ butonuna basın...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DİL SEÇİCİ ════════════════════════════════════════════ -->
+<div class="picker-overlay" id="pickerOverlay" onclick="handleOverlayClick(event)">
+  <div class="picker-sheet">
+    <div class="picker-header">
+      <div>
+        <div class="picker-eyebrow" id="pickerEyebrow">Programlama Dili</div>
+        <div class="picker-title" id="pickerTitle">Kaynak Dil Seç</div>
+      </div>
+      <button class="picker-close" onclick="closePicker()">✕</button>
+    </div>
+    <div class="picker-search-wrap">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="6" cy="6" r="4"/><path d="M9.5 9.5l3 3"/>
+      </svg>
+      <input class="picker-search" id="pickerSearch" placeholder="Dil ara..." oninput="filterPickerLangs()"/>
+    </div>
+    <div class="picker-grid" id="pickerGrid"></div>
+    <div class="picker-footer">
+      <div class="picker-selected-info">Seçili: <strong id="pickerSelectedName">—</strong></div>
+      <button class="picker-confirm" id="pickerConfirm" onclick="confirmSelection()" disabled>
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M2 6l3 3 5-5"/>
+        </svg>
+        <span id="pickerConfirmText">Onayla</span>
+    </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ AYARLAR ════════════════════════════════════════════════ -->
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-header">
+    <div class="settings-title">
+      <svg class="gear-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="9" r="2.8"/>
+        <path d="M9 1.5v1.8M9 14.7v1.8M1.5 9h1.8M14.7 9h1.8M3.4 3.4l1.27 1.27M13.33 13.33l1.27 1.27M3.4 14.6l1.27-1.27M13.33 4.67l1.27-1.27"/>
+      </svg>
+      <span id="settingsTitleText">Görünüm & Editör</span>
+    </div>
+  </div>
+  <div class="settings-body">
+    <div class="setting-group">
+      <div class="setting-label">Yazı Boyutu <span class="setting-value" id="fontSzVal">13px</span></div>
+      <input type="range" class="setting-range" min="11" max="18" value="13" oninput="applyFontSize(this.value)"/>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label" id="editorThemeLabel">Editör Teması</div>
+      <select class="setting-select" id="themeSelect" onchange="applyColorTheme(this.value)">
+        <option value="dark">Glydn Dark</option>
+        <option value="light">Glydn Light</option>
+        <option value="midnight">Midnight</option>
+        <option value="forest">Deep Forest</option>
+        <option value="ember">Ember</option>
+      </select>
+    </div>
+
+    <div class="setting-group">
+     <div class="setting-label" id="tabSizeLabel">Sekme Genişliği</div>
+      <select class="setting-select" id="tabSizeSelect" onchange="applyTabSize(this.value)">
+        <option value="2">2 Boşluk</option>
+        <option value="4" selected>4 Boşluk</option>
+        <option value="8">8 Boşluk</option>
+      </select>
+    </div>
+
+    <hr class="settings-divider"/>
+
+    <div class="toggle-row">
+      <span class="toggle-name" id="lineNumsLabel">Satır Numaraları</span>
+      <div class="toggle on" id="togLineNums" onclick="toggleLineNums(this)"></div>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-name" id="intelliSenseLabel">IntelliSense</span>
+      <div class="toggle on" id="togAutoIndent" onclick="toggleIntelliSense(this)"></div>
+    </div>
+    <div class="toggle-row">
+      <span class="toggle-name" id="wordWrapLabel">Sözcük Kaydırma</span>
+      <div class="toggle" id="togWordWrap" onclick="toggleWordWrap(this)"></div>
+    </div>
+
+    <hr class="settings-divider"/>
+
+    <div class="setting-group">
+      <div class="setting-label" id="uiLangLabel">Arayüz Dili</div>
+      <select class="setting-select" id="langSelect" onchange="changeUILanguage(this.value)">
+        <option value="tr">Türkçe</option>
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </div>
+
+  </div>
+</div>
+<input type="file" id="fileInput" style="display:none" accept=".py,.js,.ts,.rs,.go,.cpp,.c,.java,.swift,.kt,.cs,.rb,.php,.lua,.dart,.scala,.hs"/>
+
+<!-- Glydn Onay Modalı -->
+<div class="glydn-modal" id="confirmModal">
+  <div class="modal-overlay"></div>
+  <div class="modal-container">
+    <div class="modal-header">
+      <div class="modal-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 8v4M12 16h.01"/>
+        </svg>
+      </div>
+      <h3 class="modal-title" id="modalTitle">Dikkat!</h3>
+    </div>
+    <div class="modal-body" id="modalMessage">
+      Kaynak kodunu temizlemek istediğinize emin misiniz?
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" id="modalCancelBtn">İptal</button>
+      <button class="modal-btn modal-btn-confirm" id="modalConfirmBtn">Evet, Temizle</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ANA JS DOSYASI ═══════════════════════════════════════ -->
+<script src="js/i18n.js"></script>      
+<script src="js/editor.js"></script>
+<script src="js/runners.js"></script>
+<script src="js/translate.js"></script>
+<script src="js/main.js"></script>
+
+<!-- Pyodide ve Fengari en son yüklenmeli -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fengari-web@0.1.4/dist/fengari-web.js"></script>
+
+</body>
+</html>

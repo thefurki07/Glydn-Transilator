@@ -1,0 +1,249 @@
+/* --- Global Reset & Variables --- */
+:root {
+    --bg-dark: #070709;
+    --panel-dark: #13131a;
+    --text-main: #f0eee8;
+    --accent-gradient: linear-gradient(135deg, #8b7cf8 0%, #5ba4f5 100%);
+    --neon-glow: rgba(139, 124, 248, 0.4);
+    --warn-yellow: #fbbf24;
+    --success-teal: #3ecfb2;
+    --error-red: #f87171;
+    --font-primary: 'Outfit', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-primary);
+    overflow-x: hidden;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- Arka Plan Işık Efektleri (Blobs) --- */
+.info-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.blob {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: var(--accent-gradient);
+    filter: blur(120px);
+    opacity: 0.15;
+    z-index: 0;
+    border-radius: 50%;
+}
+
+.blob-1 { top: -100px; left: -50px; }
+.blob-2 { bottom: -100px; right: -50px; }
+
+/* --- Kart Tasarımı --- */
+.info-card {
+    background: var(--panel-dark);
+    width: 100%;
+    max-width: 650px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 22px;
+    padding: 40px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.info-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+/* --- Dil Seçimi--- */
+.lang-switcher {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#langBtn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: white;
+}
+
+.lang-menu {
+    display: none;
+    margin-top: 8px;
+    background: var(--panel-dark);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.lang-menu div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.lang-menu div:hover {
+    background: rgba(139, 124, 248, 0.2);
+}
+
+.brand-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.logo-text {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.badge {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(251, 191, 36, 0.1);
+    color: var(--warn-yellow);
+    border: 1px solid var(--warn-yellow);
+}
+
+.tagline {
+    opacity: 0.6;
+    font-weight: 300;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139, 124, 248, 0.3), transparent);
+    margin: 30px 0;
+}
+
+/* --- İçerik Blokları --- */
+.content-block {
+    margin-bottom: 35px;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #8b7cf8;
+}
+
+.section-text {
+    line-height: 1.7;
+    font-weight: 300;
+    opacity: 0.9;
+}
+
+.alert-box {
+    background: rgba(251, 191, 36, 0.03);
+    border-left: 4px solid var(--warn-yellow);
+    padding: 20px;
+    border-radius: 0 12px 12px 0;
+}
+
+.accent-yellow { color: var(--warn-yellow); }
+
+.small { font-size: 0.9rem; opacity: 0.8; }
+
+/* Tech Stack Grid  */
+.tech-stack {
+    display: grid;
+    /* 5 öğe olduğu için grid yapısını otomatik ayarlıyoruz */
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.tech-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 15px 10px;
+    border-radius: 14px;
+    text-align: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.tech-item:hover {
+    border-color: #8b7cf8;
+    background: rgba(139, 124, 248, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(139, 124, 248, 0.2);
+}
+
+.tech-item span {
+    display: block;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.tech-item small {
+    font-family: var(--font-mono);
+    color: var(--success-teal); /* LPU Inference veya API bilgisi burada parlayacak */
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- Footer & Button --- */
+.info-footer {
+    margin-top: 40px;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: var(--accent-gradient);
+    color: white;
+    font-family: var(--font-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(139, 124, 248, 0.3);
+    transition: 0.3s all cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.primary-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(139, 124, 248, 0.5);
+}
+
+/* --- Responsive --- */
+@media (max-width: 580px) {
+    .info-card {
+        padding: 25px;
+        margin: 10px;
+    }
+    .logo-text { font-size: 2rem; }
+}

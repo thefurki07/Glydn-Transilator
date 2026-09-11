@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glydn | Information</title>
+    <link rel="icon" href="assets/logo/Glydnlogo.png">
+    <link rel="stylesheet" href="styles/information.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <main class="info-wrapper">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+
+        <article class="info-card">
+            <header class="info-header">
+                <div class="brand-section">
+                    <h1 class="logo-text">GLYDN TRANSLATOR</h1>
+                    <span class="badge">BETA v1.0</span>
+                    <div class="lang-switcher">
+                        <button id="langBtn">🌐</button>
+                        <div class="lang-menu" id="langMenu">
+                            <div data-lang="tr">Türkçe</div>
+                            <div data-lang="en">English</div>
+                            <div data-lang="de">Deutsch</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="divider"></div>
+
+            <div class="info-body">
+                
+                <section class="content-block">
+                    <h2 class="section-title" data-i18n="visionTitle">Vizyonumuz</h2>
+                    <p class="section-text" data-i18n="visionText">
+                        Glydn, yazılım geliştirme süreçlerini hızlandırmak ve diller arası bariyerleri ortadan kaldırmak için doğdu. 
+                        Minimalist tasarımı, güçlü API entegrasyonlarıyla birleştirerek size en temiz çalışma alanını sunuyoruz.
+                    </p>
+                </section>
+
+                <section class="content-block alert-box">
+                    <h2 class="section-title accent-yellow" data-i18n="legalTitle"></h2>
+                    <p class="section-text small" data-i18n="legalText">
+                        Arayüzde yer alan programlama dili logoları (Python, Rust, Java vb.), sadece kullanıcı deneyimini iyileştirmek ve 
+                        hızlı seçim yapmanızı sağlamak amacıyla kullanılmıştır. Bu logoların tüm fikri mülkiyet hakları ilgili vakıf ve şirketlere aittir.
+                    </p>
+                </section>
+
+                <section class="content-block">
+                    <h2 class="section-title" data-i18n="techTitle">Teknolojik Katman</h2>
+                    <div class="tech-stack">
+                        <div class="tech-item"><span>Groq API</span><small>LPU Inference</small></div>
+                        <div class="tech-item"><span>Pyodide</span><small>MPL 2.0</small></div>
+                        <div class="tech-item"><span>Fengari</span><small>MIT</small></div>
+                        <div class="tech-item"><span>Judge0</span><small>API</small></div>
+                        <div class="tech-item"><span>Piston</span><small>API</small></div>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="info-footer">
+                <a href="index.html">
+                    <button class="primary-btn" data-i18n="backBtn">
+                        Sisteme Dön
+                    </button>
+                </a>
+            </footer>
+        </article>
+    </main>
+<script>
+const translations = {
+    tr: {
+        tagline: "Geleceğin kod dönüştürme arayüzü.",
+        visionTitle: "Vizyonumuz",
+        visionText: "Glydn, yazılım geliştirme süreçlerini hızlandırmak ve diller arası bariyerleri ortadan kaldırmak için doğdu.",
+        legalTitle: "Şeffaflık & Markalar",
+        legalText: "Arayüzde yer alan programlama dili logoları (Python, Rust, Java vb.), sadece kullanıcı deneyimini iyileştirmek ve hızlı seçim yapmanızı sağlamak amacıyla kullanılmıştır.",
+        techTitle: "Teknolojik Katman",
+        backBtn: "Sisteme Dön",
+        langNames: {
+            tr: "Türkçe",
+            en: "English", 
+            de: "Deutsch"
+        }
+    },
+
+    en: {
+        tagline: "The future code transformation interface.",
+        visionTitle: "Our Vision",
+        visionText: "Glydn was created to accelerate software development and eliminate language barriers.",
+        legalTitle: "Transparency & Trademarks",
+        legalText: "Programming language logos (Python, Rust, Java, etc.) are used only to improve user experience.",
+        techTitle: "Technology Stack",
+        backBtn: "Back to System",
+         langNames: {
+            tr: "Turkish",
+            en: "English",
+            de: "German"
+        }
+    },
+
+    de: {
+        tagline: "Die Zukunft der Code-Transformation.",
+        visionTitle: "Unsere Vision",
+        visionText: "Glydn wurde entwickelt, um die Softwareentwicklung zu beschleunigen und Sprachbarrieren zu beseitigen.",
+        legalTitle: "Transparenz & Marken",
+        legalText: "Programmiersprachen-Logos (Python, Rust, Java usw.) werden nur zur Verbesserung der Benutzererfahrung verwendet.",
+        techTitle: "Technologie-Stack",
+        backBtn: "Zurück zum System",
+         langNames: {
+            tr: "Turkish",
+            en: "English",
+            de: "German"
+        }
+    }
+};
+
+// ============ ANA UYGULAMADAN DİL BİLGİSİNİ AL ============
+document.addEventListener("DOMContentLoaded", () => {
+    // Önce ana uygulamadan gelen dil bilgisini kontrol et (URL parametresi)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlLang = urlParams.get('lang');
+    
+    // Sonra localStorage'dan kontrol et
+    const storedLang = localStorage.getItem('glydn_lang') || localStorage.getItem('lang');
+    
+    // Öncelik sırası: URL > localStorage > varsayılan tr
+    let initialLang = urlLang || storedLang || 'tr';
+    
+    // Geçerli dil mi kontrol et
+    if (!['tr', 'en', 'de'].includes(initialLang)) initialLang = 'tr';
+    
+    // Dili uygula
+    applyLang(initialLang);
+    
+    // Menüde seçili olanı işaretle (isteğe bağlı)
+    const menuItems = document.querySelectorAll('#langMenu div');
+    menuItems.forEach(item => {
+        if (item.getAttribute('data-lang') === initialLang) {
+            item.style.background = 'rgba(139, 124, 248, 0.2)';
+        }
+    });
+});
+
+
+// 🔥 GENEL APPLY 
+function applyLang(lang) {
+    // Mevcut data-i18n elementlerini güncelle
+    const elements = document.querySelectorAll("[data-i18n]");
+    elements.forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[lang][key]) {
+            el.textContent = translations[lang][key];
+        }
+    });
+    
+    // Dil menüsündeki yazıları güncelle ve seçili dili vurgula
+    const menuItems = document.querySelectorAll('#langMenu div');
+    menuItems.forEach(item => {
+        const itemLang = item.getAttribute('data-lang');
+        
+        // Yazıları güncelle
+        if (translations[lang].langNames && translations[lang].langNames[itemLang]) {
+            item.textContent = translations[lang].langNames[itemLang];
+        }
+        
+        // ⭐ Seçili dili vurgula (BU DÖNGÜNÜN İÇİNDE OLMALI!)
+        if (itemLang === lang) {
+            item.style.background = 'rgba(139, 124, 248, 0.2)';
+            item.style.borderLeft = '3px solid #8b7cf8';
+        } else {
+            item.style.background = '';
+            item.style.borderLeft = '';
+        }
+    });
+    
+    localStorage.setItem("lang", lang);
+}
+// başlangıç
+const currentLang = localStorage.getItem("lang") || "tr";
+applyLang(currentLang);  
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("langBtn");
+    const menu = document.getElementById("langMenu");
+
+    btn.onclick = () => {
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    };
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const btn = document.getElementById("langBtn");
+    const menu = document.getElementById("langMenu");
+
+    // Menü aç/kapa
+    btn.addEventListener("click", () => {
+        menu.classList.toggle("open");
+    });
+
+    // Dil seçimi
+    const items = menu.querySelectorAll("div");
+
+    items.forEach(item => {
+        item.addEventListener("click", () => {
+            const lang = item.getAttribute("data-lang");
+
+            applyLang(lang); // 🔥 önemli
+            menu.classList.remove("open");
+        });
+    });
+
+});
+</script>
+</body>
+</html>
