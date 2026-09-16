@@ -29,7 +29,7 @@ body {
     justify-content: center;
 }
 
-/* --- Arka Plan Işık Efektleri (Blobs) --- */
+/* --- Backgraund Light Effect(Blobs) --- */
 .info-wrapper {
     position: relative;
     width: 100%;
@@ -52,7 +52,7 @@ body {
 .blob-1 { top: -100px; left: -50px; }
 .blob-2 { bottom: -100px; right: -50px; }
 
-/* --- Kart Tasarımı --- */
+/* --- CARDS --- */
 .info-card {
     background: var(--panel-dark);
     width: 100%;
@@ -70,7 +70,7 @@ body {
     text-align: center;
     margin-bottom: 30px;
 }
-/* --- Dil Seçimi--- */
+/* --- Language Selector--- */
 .lang-switcher {
     position: absolute;
     top: 20px;
@@ -142,7 +142,7 @@ body {
     margin: 30px 0;
 }
 
-/* --- İçerik Blokları --- */
+/* --- Content Blocks --- */
 .content-block {
     margin-bottom: 35px;
 }
@@ -174,7 +174,6 @@ body {
 /* Tech Stack Grid  */
 .tech-stack {
     display: grid;
-    /* 5 öğe olduğu için grid yapısını otomatik ayarlıyoruz */
     grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
     gap: 12px;
     margin-top: 15px;
@@ -208,7 +207,7 @@ body {
 
 .tech-item small {
     font-family: var(--font-mono);
-    color: var(--success-teal); /* LPU Inference veya API bilgisi burada parlayacak */
+    color: var(--success-teal); /* LPU Inference */
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
