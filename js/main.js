@@ -1,11 +1,11 @@
 /* ══════════════════════════════════════════════════════════════
    main.js — State, init, lang picker, settings, swap,
              copy/download, modal
-   Yükleme sırası (index.html):
+   Load order (index.html):
      i18n.js → editor.js → runners.js → translate.js → main.js
 ══════════════════════════════════════════════════════════════ */
 
-/* ── Dil listesi ─────────────────────────────────────────── */
+/* ── Language list ───────────────────────────────────────── */
 const LANGUAGES = [
   { id:'python',     name:'Python',     ext:'py',    logo:`<img src="assets/logo/python.png"     width="28" height="28"/>` },
   { id:'javascript', name:'JavaScript', ext:'js',    logo:`<img src="assets/logo/javascript.png" width="28" height="28"/>` },
@@ -59,20 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.line-nums').forEach(ln => ln.classList.add('visible'));
 
-  // Kayıtlı dili uygula ve select'i eşitle
+  // Apply saved language and sync select
   const savedLang = localStorage.getItem('glydnLang') || 'en';
   const langSelect = document.getElementById('langSelect');
   if (langSelect) langSelect.value = savedLang;
   changeUILanguage(savedLang);
 });
 
-/* ── Dil butonu render ───────────────────────────────────── */
+/* ── Language button render ──────────────────────────────── */
 function renderLangBtn(side, lang) {
   document.getElementById(side + 'Logo').innerHTML = lang.logo;
   document.getElementById(side + 'LangName').textContent = lang.name;
 }
 
-/* ── Dil seçici (picker) ─────────────────────────────────── */
+/* ── Language picker ─────────────────────────────────────── */
 function openPicker(side) {
   currentPicker = side;
   pendingSelection = side === 'source' ? srcLang : tgtLang;
@@ -177,12 +177,12 @@ function downloadOutput() {
   a.click();
 }
 
-/* ── Temizle (modal ile) ─────────────────────────────────── */
+/* ── Clear (with modal) ──────────────────────────────────── */
 async function clearSrc() {
   const code = document.getElementById('srcCode').value;
   const t    = translations[currentLang];
   if (!code.trim()) {
-    addDebugLog(document.getElementById('runOutput'), 'warning', t.noCode || 'Zaten boş.');
+    addDebugLog(document.getElementById('runOutput'), 'warning', t.noCode || 'Already empty.');
     return;
   }
   const confirmed = await showGlydnModal({
@@ -210,10 +210,10 @@ function showGlydnModal(options) {
     const confirmBtn = document.getElementById('modalConfirmBtn');
     const cancelBtn  = document.getElementById('modalCancelBtn');
 
-    titleEl.textContent    = options.title       || 'Dikkat!';
-    messageEl.textContent  = options.message     || 'Bu işlemi onaylıyor musunuz?';
-    confirmBtn.textContent = options.confirmText || 'Evet, Devam Et';
-    cancelBtn.textContent  = options.cancelText  || 'İptal';
+    titleEl.textContent    = options.title       || 'Warning!';
+    messageEl.textContent  = options.message     || 'Do you confirm this action?';
+    confirmBtn.textContent = options.confirmText || 'Yes, Continue';
+    cancelBtn.textContent  = options.cancelText  || 'Cancel';
     modal.classList.add('active');
 
     const cleanUp = () => {
@@ -285,7 +285,7 @@ function applyColorTheme(theme) {
 
 function applyTabSize(v) { tabSz = parseInt(v); }
 
-/* ── Global kısayollar ───────────────────────────────────── */
+/* ── Global shortcuts ────────────────────────────────────── */
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closePicker(); closeRun(); }
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runTranslation();
