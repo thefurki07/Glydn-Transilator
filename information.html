@@ -119,25 +119,25 @@ const translations = {
     }
 };
 
-// ============ ANA UYGULAMADAN DİL BİLGİSİNİ AL ============
+// Check app language state on load
 document.addEventListener("DOMContentLoaded", () => {
-    // Önce ana uygulamadan gelen dil bilgisini kontrol et (URL parametresi)
+    // Check URL parameters first
     const urlParams = new URLSearchParams(window.location.search);
     const urlLang = urlParams.get('lang');
     
-    // Sonra localStorage'dan kontrol et
+    // Fallback to storage
     const storedLang = localStorage.getItem('glydn_lang') || localStorage.getItem('lang');
     
-    // Öncelik sırası: URL > localStorage > varsayılan tr
+    // Priority: URL param -> local storage -> default (tr)
     let initialLang = urlLang || storedLang || 'tr';
     
-    // Geçerli dil mi kontrol et
+    // Validate target language
     if (!['tr', 'en', 'de'].includes(initialLang)) initialLang = 'tr';
     
-    // Dili uygula
+    // Apply initial state
     applyLang(initialLang);
     
-    // Menüde seçili olanı işaretle (isteğe bağlı)
+    // Highlight active menu item if available
     const menuItems = document.querySelectorAll('#langMenu div');
     menuItems.forEach(item => {
         if (item.getAttribute('data-lang') === initialLang) {
@@ -147,9 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// 🔥 GENEL APPLY 
+// Core translation updater
 function applyLang(lang) {
-    // Mevcut data-i18n elementlerini güncelle
+    // Update elements with data-i18n attributes
     const elements = document.querySelectorAll("[data-i18n]");
     elements.forEach(el => {
         const key = el.getAttribute("data-i18n");
@@ -158,17 +158,17 @@ function applyLang(lang) {
         }
     });
     
-    // Dil menüsündeki yazıları güncelle ve seçili dili vurgula
+    // Refresh language picker UI and mark active selection
     const menuItems = document.querySelectorAll('#langMenu div');
     menuItems.forEach(item => {
         const itemLang = item.getAttribute('data-lang');
         
-        // Yazıları güncelle
+        // Update menu labels
         if (translations[lang].langNames && translations[lang].langNames[itemLang]) {
             item.textContent = translations[lang].langNames[itemLang];
         }
         
-        // ⭐ Seçili dili vurgula (BU DÖNGÜNÜN İÇİNDE OLMALI!)
+        // Highlight active item
         if (itemLang === lang) {
             item.style.background = 'rgba(139, 124, 248, 0.2)';
             item.style.borderLeft = '3px solid #8b7cf8';
@@ -180,7 +180,8 @@ function applyLang(lang) {
     
     localStorage.setItem("lang", lang);
 }
-// başlangıç
+
+// Initial boot
 const currentLang = localStorage.getItem("lang") || "tr";
 applyLang(currentLang);  
 
@@ -198,19 +199,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = document.getElementById("langBtn");
     const menu = document.getElementById("langMenu");
 
-    // Menü aç/kapa
+    // Toggle menu visibility
     btn.addEventListener("click", () => {
         menu.classList.toggle("open");
     });
 
-    // Dil seçimi
+    // Language switch handlers
     const items = menu.querySelectorAll("div");
 
     items.forEach(item => {
         item.addEventListener("click", () => {
             const lang = item.getAttribute("data-lang");
 
-            applyLang(lang); // 🔥 önemli
+            applyLang(lang);
             menu.classList.remove("open");
         });
     });
