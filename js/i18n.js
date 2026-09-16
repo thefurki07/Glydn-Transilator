@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   i18n.js — Arayüz dili çevirileri (TR / EN / DE)
+   i18n.js — UI language translations (TR / EN / DE)
 ══════════════════════════════════════════════════════════════ */
 
 const translations = {
@@ -161,7 +161,7 @@ const translations = {
   }
 };
 
-/* ── UI güncelle ─────────────────────────────────────────── */
+/* ── Update UI ───────────────────────────────────────────── */
 function updateUILanguage() {
   const t = translations[currentLang];
   if (!t) return;
@@ -200,7 +200,7 @@ function updateUILanguage() {
   if (srcCode) srcCode.placeholder = t.placeholderSrc;
   if (tgtCode) tgtCode.placeholder = t.placeholderTgt;
 
-  // Footer meta (data-count ile)
+  // Footer meta (with data-count)
   const srcLinesEl = document.getElementById('srcLines');
   const srcCharsEl = document.getElementById('srcChars');
   const tgtLinesEl = document.getElementById('tgtLines');
@@ -260,7 +260,7 @@ function updateUILanguage() {
   const pickerConfirmText = document.getElementById('pickerConfirmText');
   if (pickerConfirmText) pickerConfirmText.textContent = t.pickerConfirm;
 
-  // Buton title'ları — class'a göre bul, title'a göre değil
+  // Button titles — find by class, not by title
   const uploadBtn    = document.getElementById('uploadBtn');
   const srcRunBtn    = document.getElementById('srcRunBtn');
   const tgtRunBtn    = document.getElementById('tgtRunBtn');
@@ -272,7 +272,7 @@ function updateUILanguage() {
   if (translateBtn) translateBtn.title = t.translateTitle;
   if (swapBtn)      swapBtn.title      = t.swapTitle;
 
-  // Temizle / Kopyala / İndir — ID ile bul
+  // Clear / Copy / Download — find by ID
   const clearBtn    = document.querySelector('#srcPanel .action-btn:nth-child(3)');
   const copyBtn     = document.querySelector('#tgtPanel .action-btn:nth-child(2)');
   const downloadBtn = document.querySelector('#tgtPanel .action-btn:nth-child(3)');
@@ -290,11 +290,11 @@ function updateUILanguage() {
   if (modalCancelEl)  modalCancelEl.textContent = t.modalCancel;
   if (modalConfirmEl) modalConfirmEl.textContent= t.modalConfirm;
 
-  // Çeviri uyarısı
+  // Translation warning
   const warnEl = document.getElementById('translationWarning');
   if (warnEl) warnEl.textContent = t.translationWarning;
 
-  // Sayfa title
+  // Page title
   document.title = `Glydn — ${t.logoSub}`;
 }
 
@@ -304,7 +304,7 @@ function changeUILanguage(lang) {
   const sel = document.getElementById('langSelect');
   if (sel) sel.value = lang;
   updateUILanguage();
-  // Terminal hint güncelle
+  // Update terminal hint
   const outEl = document.getElementById('runOutput');
   if (outEl && outEl.children.length === 1) {
     const msg = outEl.children[0]?.querySelector('.log-message');
