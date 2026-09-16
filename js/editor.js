@@ -1,10 +1,10 @@
 /* ══════════════════════════════════════════════════════════════
-   editor.js — Editör: IntelliSense, klavye, satır numaraları,
-               scroll sync, dosya yükleme
-   Bağımlılık: tabSz, intelliSenseEnabled, srcLang (main.js'te)
+   editor.js — Editor: IntelliSense, keyboard, line numbers,
+               scroll sync, file upload
+   Dependency: tabSz, intelliSenseEnabled, srcLang (in main.js)
 ══════════════════════════════════════════════════════════════ */
 
-/* ── Snippet setleri ─────────────────────────────────────── */
+/* ── Snippet sets ────────────────────────────────────────── */
 const LANG_SNIPPETS = {
   python: {
     'pr':    () => `print()`,
@@ -139,7 +139,7 @@ function getSnippets() {
   return LANG_SNIPPETS[srcLang.id] || LANG_SNIPPETS._default;
 }
 
-/* ── Klavye handler ──────────────────────────────────────── */
+/* ── Keyboard handler ────────────────────────────────────── */
 function handleKeyDown(e) {
   const ta = e.target;
 
@@ -155,7 +155,7 @@ function handleKeyDown(e) {
     return;
   }
 
-  // Tab — snippet dene, yoksa girinti
+  // Tab — try snippet, else indent
   if (e.key === 'Tab') {
     e.preventDefault();
     const start = ta.selectionStart;
@@ -178,7 +178,7 @@ function handleKeyDown(e) {
     return;
   }
 
-  // Enter — otomatik girinti
+  // Enter — auto indent
   if (e.key === 'Enter') {
     e.preventDefault();
     const start = ta.selectionStart;
@@ -195,7 +195,7 @@ function handleKeyDown(e) {
     return;
   }
 
-  // Otomatik kapama parantezler
+  // Auto-close brackets
   const pairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
   if (pairs[e.key]) {
     const start = ta.selectionStart;
@@ -213,9 +213,9 @@ function handleKeyDown(e) {
   }
 }
 
-/* ── Satır numaraları & scroll ───────────────────────────── */
+/* ── Line numbers & scroll ───────────────────────────────── */
 
-// Hedef panel satır analizi { lineNumber: '✅'|'⚠️'|'❌' }
+// Target panel line analysis { lineNumber: '✅'|'⚠️'|'❌' }
 let lineAnalysis = {};
 
 function updateLineNums(side) {
@@ -236,7 +236,7 @@ function updateLineNums(side) {
     numSpan.textContent = i;
     row.appendChild(numSpan);
 
-    // Sadece hedef panelde ve analiz varsa badge ekle
+    // Add badge only on target panel and if analysis exists
     if (side === 'tgt' && Object.keys(lineAnalysis).length > 0) {
       const badge = document.createElement('span');
       const emoji = lineAnalysis[i];
@@ -256,7 +256,7 @@ function updateLineNums(side) {
       } else {
         badge.className = 'line-badge badge-empty';
       }
-      // Tooltip pozisyonunu mouse'a göre ayarla
+      // Set tooltip position based on mouse
       badge.addEventListener('mouseenter', (e) => showBadgeTooltip(e, badge));
       badge.addEventListener('mouseleave', hideBadgeTooltip);
       row.appendChild(badge);
@@ -285,18 +285,18 @@ function updateMeta(side) {
   const linesEl = document.getElementById(side + 'Lines');
   if (linesEl) {
     linesEl.dataset.count   = lines;
-    linesEl.textContent     = t ? t.lines(lines) : lines + ' satır';
+    linesEl.textContent     = t ? t.lines(lines) : lines + ' lines';
   }
   if (side === 'src') {
     const charsEl = document.getElementById('srcChars');
     if (charsEl) {
       charsEl.dataset.count = val.length;
-      charsEl.textContent   = t ? t.chars(val.length) : val.length + ' kar.';
+      charsEl.textContent   = t ? t.chars(val.length) : val.length + ' chars';
     }
   }
 }
 
-/* ── Dosya yükleme ───────────────────────────────────────── */
+/* ── File upload ─────────────────────────────────────────── */
 function handleFileUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -310,7 +310,7 @@ function handleFileUpload(e) {
   e.target.value = '';
 }
 
-/* ── Badge Tooltip (JS kontrollü) ───────────────────────── */
+/* ── Badge Tooltip (JS controlled) ───────────────────────── */
 let tooltipEl = null;
 
 function showBadgeTooltip(e, badge) {
