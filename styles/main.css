@@ -95,9 +95,7 @@ body::before {
 .app { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100vh; }
 
 
-/* ═══════════════════════════════════════════════════════════════
-   GLYDN MODAL - Özel Onay Penceresi
-═══════════════════════════════════════════════════════════════ */
+/* GLYDN MODAL - Confirmation window */
 .glydn-modal {
   position: fixed;
   top: 0;
@@ -235,7 +233,6 @@ body::before {
 }
 
 /* Logo group */
-/* Logo group - daha göz önünde */
 .logo-group {
   display: flex;
   align-items: center;
@@ -265,7 +262,7 @@ body::before {
   color: var(--text-primary);
 }
 
-/* Logo yazısı - daha belirgin */
+/* Logo text */
 .logo-name {
   font-size: 22px;
   font-weight: 800;
@@ -286,7 +283,7 @@ body::before {
   opacity: 0.8;
 }
 
-/* Logo hover efekti */
+/* Logo hover effect */
 .logo-icon {
   transition: all 0.3s ease;
 }
@@ -481,9 +478,7 @@ body::before {
 .translate-btn.loading svg { animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ═══════════════════════════════════════════════════════════════
-   RUN PANEL — TAM GENİŞLİK (width: 100%)
-═══════════════════════════════════════════════════════════════ */
+/* RUN PANEL */
 .run-panel-wrap {
   flex-shrink: 0;
   height: 0;
@@ -530,7 +525,7 @@ body::before {
 }
 .run-close-btn:hover { background: var(--bg-hover); color: var(--text-secondary); }
 
-/* Terminal çıktı alanı */
+/* Terminal Output */
 .run-output {
   flex: 1;
   padding: 10px 20px;
@@ -541,7 +536,7 @@ body::before {
   background: rgba(0,0,0,0.2);
 }
 
-/* Log satırları - Glydn frontend tarzı */
+/* Log lines */
 .log-line {
   display: flex;
   align-items: flex-start;
@@ -571,28 +566,24 @@ body::before {
   word-break: break-word;
 }
 
-/* Log seviyeleri - Renkler */
-/* main.css'teki log renklerini güncelle */
+/* Log levels - Colors */
 
-/* Log seviyeleri - Yumuşatılmış renkler */
-.log-line.info .log-icon { color: #60a5fa; }      /* Daha yumuşak mavi */
+.log-line.info .log-icon { color: #60a5fa; } /* Softer blue */
 .log-line.info .log-message { color: #9ca3af; }
 
-.log-line.warning .log-icon { color: #fbbf24; }    /* Daha yumuşak sarı */
+.log-line.warning .log-icon { color: #fbbf24; } /* Softer yellow */
 .log-line.warning .log-message { color: #fcd34d; }
 
-.log-line.error .log-icon { color: #f87171; }      /* Daha yumuşak kırmızı */
+.log-line.error .log-icon { color: #f87171; } /* Softer red */
 .log-line.error .log-message { color: #fca5a5; }
 
-.log-line.success .log-icon { color: #34d399; }    /* Daha yumuşak yeşil */
+.log-line.success .log-icon { color: #34d399; } /* Softer green */
 .log-line.success .log-message { color: #6ee7b7; }
 
-.log-line.debug .log-icon { color: #a78bfa; }      /* Daha yumuşak mor */
+.log-line.debug .log-icon { color: #a78bfa; } /* Softer purple */
 .log-line.debug .log-message { color: #c4b5fd; opacity: 0.8; }
-
-/* Arka plan da biraz daha yumuşak olabilir */
 .run-output {
-  background: rgba(0,0,0,0.15);  /* daha açık */
+background: rgba(0,0,0,0.15);
 }
 
 /* LANGUAGE PICKER */
@@ -773,8 +764,9 @@ body::before {
   .log-time { min-width: 50px; font-size: 9px; }
   .log-line { gap: 6px; font-size: 10px; }
 }
+
 /* ══════════════════════════════════════════════════════════════
-   Satır Numarası Analiz Badge'leri
+   Line Number Analysis Badges
 ══════════════════════════════════════════════════════════════ */
 
 .line-nums {
@@ -831,7 +823,7 @@ body::before {
   border: 1px solid rgba(248, 113, 113, 0.3);
 }
 
-/* Test Et butonu — action-btn stiline uyumlu */
+/* Test button — matching action-btn styles */
 .test-btn {
   color: #3ecfb2 !important;
 }
@@ -845,7 +837,7 @@ body::before {
   cursor: default;
 }
 
-/* Tooltip popup — JS tarafından body'e eklenir (overflow:hidden'dan etkilenmez) */
+/* Tooltip popup — appended to body via JS (unaffected by overflow:hidden) */
 .badge-tooltip-popup {
   display: none;
   position: fixed;
@@ -862,7 +854,7 @@ body::before {
   z-index: 9999;
 }
 
-/* ── Çeviri Uyarı Notu ───────────────────────────────────── */
+/* ── Translation Warning Note ────────────────────────────── */
 .translation-warning {
   display: none;
   margin: 0 12px 10px;
