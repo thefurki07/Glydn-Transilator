@@ -108,7 +108,7 @@
       </div>
     </div>
 
-    <!-- ORTA -->
+    <!-- MİDDLE -->
     <div class="middle-col">
       <button class="swap-btn" onclick="swapLanguages()" title="Dilleri Değiştir">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
@@ -122,7 +122,7 @@
       </button>
     </div>
 
-    <!-- SAĞ: HEDEF -->
+    <!--RİGHT SİDE-->
     <div class="editor-panel panel-target" id="tgtPanel">
       <div class="panel-glow"></div>
       <div class="panel-header">
@@ -172,7 +172,7 @@
     </div>
   </main>
 
-  <!-- ══ TEK RUN PANEL (TERMINAL) - TAM GENİŞLİK ═══════════════ -->
+  <!-- ══ ONE RUN PANEL (TERMINAL) - FULL ═══════════════ -->
   <div class="run-panel-wrap" id="runPanelWrap">
     <div class="run-panel">
       <div class="run-header">
@@ -193,7 +193,7 @@
   </div>
 </div>
 
-<!-- ══ DİL SEÇİCİ ════════════════════════════════════════════ -->
+<!-- ══ LANGUAGE SELECTOR ════════════════════════════════════════════ -->
 <div class="picker-overlay" id="pickerOverlay" onclick="handleOverlayClick(event)">
   <div class="picker-sheet">
     <div class="picker-header">
@@ -222,7 +222,7 @@
   </div>
 </div>
 
-<!-- ══ AYARLAR ════════════════════════════════════════════════ -->
+<!-- ══ SETTİNGS ════════════════════════════════════════════════ -->
 <div class="settings-panel" id="settingsPanel">
   <div class="settings-header">
     <div class="settings-title">
@@ -289,7 +289,7 @@
 </div>
 <input type="file" id="fileInput" style="display:none" accept=".py,.js,.ts,.rs,.go,.cpp,.c,.java,.swift,.kt,.cs,.rb,.php,.lua,.dart,.scala,.hs"/>
 
-<!-- Glydn Onay Modalı -->
+<!-- Glydn Modal-->
 <div class="glydn-modal" id="confirmModal">
   <div class="modal-overlay"></div>
   <div class="modal-container">
@@ -312,14 +312,14 @@
   </div>
 </div>
 
-<!-- ══ ANA JS DOSYASI ═══════════════════════════════════════ -->
+<!-- ══ MAİN JS ═══════════════════════════════════════ -->
 <script src="js/i18n.js"></script>      
 <script src="js/editor.js"></script>
 <script src="js/runners.js"></script>
 <script src="js/translate.js"></script>
 <script src="js/main.js"></script>
 
-<!-- Pyodide ve Fengari en son yüklenmeli -->
+<!-- Pyodide ve Fengari  -->
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fengari-web@0.1.4/dist/fengari-web.js"></script>
 
