@@ -1,14 +1,14 @@
 /* ══════════════════════════════════════════════════════════════
-   runners.js — Kod çalıştırma motorları
+   runners.js — Code execution engines
    • Python  → Pyodide (WASM)
    • Lua     → Fengari (WASM)
    • JS / TS → new Function() sandbox
-   • Diğerleri → Judge0 CE (ce.judge0.com)
-   Bağımlılık: addDebugLog, escapeHtml, translations, currentLang,
-               srcLang, tgtLang (main.js & i18n.js'te)
+   • Others  → Judge0 CE (ce.judge0.com)
+   Dependency: addDebugLog, escapeHtml, translations, currentLang,
+               srcLang, tgtLang (in main.js & i18n.js)
 ══════════════════════════════════════════════════════════════ */
 
-/* ── Yardımcılar ─────────────────────────────────────────── */
+/* ── Helpers ─────────────────────────────────────────────── */
 function getTimestamp() {
   const now = new Date();
   return `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
@@ -51,7 +51,7 @@ function closeRun() {
   document.querySelectorAll('.run-btn').forEach(b => b.classList.remove('run-active'));
 }
 
-/* ── Ana çalıştırma yönlendirici ─────────────────────────── */
+/* ── Main run router ─────────────────────────────────────── */
 function simulateRun(side) {
   const code  = document.getElementById(side + 'Code').value;
   const outEl = document.getElementById('runOutput');
@@ -75,7 +75,7 @@ function simulateRun(side) {
     setTimeout(() => {
       try {
         const jsCode = transpileTypeScript(code);
-        addDebugLog(outEl, 'debug', 'Dönüştürülen kod: ' + jsCode.substring(0, 100) + (jsCode.length > 100 ? '...' : ''));
+        addDebugLog(outEl, 'debug', 'Transpiled code: ' + jsCode.substring(0, 100) + (jsCode.length > 100 ? '...' : ''));
         const logs = [];
         const fakeConsole = {
           log:   (...a) => logs.push({ level: 'success', msg: a.map(x => typeof x === 'object' ? JSON.stringify(x, null, 2) : String(x)).join(' ') }),
@@ -136,7 +136,7 @@ function simulateRun(side) {
     setTimeout(async () => {
       const result = await runPython(code);
       if (result.success) {
-        if (result.output.length === 0 || (result.output.length === 1 && result.output[0] === '(çıktı yok)'))
+        if (result.output.length === 0 || (result.output.length === 1 && result.output[0] === '(no output)'))
           addDebugLog(outEl, 'success', translations[currentLang]?.noOutput || 'Code executed (no output)');
         else
           result.output.forEach(line => { if (line.trim()) addDebugLog(outEl, 'success', line); });
@@ -147,7 +147,7 @@ function simulateRun(side) {
     return;
   }
 
-  // ── Diğer diller → Judge0 CE ────────────────────────────
+  // ── Other languages → Judge0 CE ─────────────────────────
   addDebugLog(outEl, 'info', `⚙️ ${lang.name} ${translations[currentLang]?.runningGeneric || 'running...'}`);
   setTimeout(async () => {
     const result = await runWithJudge0(lang, code);
@@ -199,7 +199,7 @@ async function initPyodide() {
   }
   pyodideLoading = true;
   try {
-    // 🔧 DÜZELTME: translations ve currentLang'i doğrudan kullan
+    // 🔧 FIX: use translations and currentLang directly
     const lang = currentLang;
     const terminalMsg = translations[currentLang]?.pythonLoading || '🐍 Loading Python runtime...';
     addDebugLog(document.getElementById('runOutput'), 'info', terminalMsg);
@@ -224,7 +224,7 @@ async function initPyodide() {
 async function runPython(code) {
   try {
     const python = await initPyodide();
-    if (!python) return { success: false, output: [], error: 'Python runtime yüklenemedi.' };
+    if (!python) return { success: false, output: [], error: 'Python runtime could not be loaded.' };
 
     python.runPython(`
 import sys
@@ -242,7 +242,7 @@ sys.stderr = capture
     try {
       python.runPython(code);
       const captured = python.runPython(`capture.get_output()`);
-      output = (captured && captured.trim()) ? captured.trim().split('\n') : ['(çıktı yok)'];
+      output = (captured && captured.trim()) ? captured.trim().split('\n') : ['(no output)'];
     } catch (e) {
       errorOutput.push(e.toString());
     }
@@ -260,7 +260,7 @@ sys.stderr = capture
 async function runLua(code) {
   return new Promise((resolve) => {
     if (typeof fengari === 'undefined') {
-      resolve({ success: false, output: [], error: 'Lua runtime (Fengari) yüklenemedi. Sayfayı yenileyin.' });
+      resolve({ success: false, output: [], error: 'Lua runtime (Fengari) could not be loaded. Refresh the page.' });
       return;
     }
     const output = [];
@@ -281,14 +281,14 @@ end
 return table.concat(_out, "\\n")
 `;
       const fn = fengari.load(wrappedCode);
-      if (typeof fn !== 'function') { resolve({ success: false, output: [], error: 'Lua derleme hatası.' }); return; }
+      if (typeof fn !== 'function') { resolve({ success: false, output: [], error: 'Lua compile error.' }); return; }
       const result = fn();
       if (typeof result === 'string' && result.trim() !== '')
         result.split('\n').forEach(line => { if (line !== '') output.push(line); });
       resolve({ success: true, output, error: null });
     } catch (err) {
       let msg = (err && err.message) ? err.message : String(err);
-      msg = msg.replace(/\[string "[^"]*"\]:(\d+):/g, 'satır $1:');
+      msg = msg.replace(/\[string "[^"]*"\]:(\d+):/g, 'line $1:');
       resolve({ success: false, output: [], error: msg });
     }
   });
@@ -325,12 +325,12 @@ function b64Decode(str) {
 async function runWithJudge0(lang, code) {
   const langId = JUDGE0_LANGS[lang.id];
   if (!langId) {
-    // Browser'da çalışan diller Judge0'a gelmemeli
+    // Languages running in browser should not reach Judge0
     const browserLangs = ['javascript', 'typescript', 'python', 'lua'];
     if (browserLangs.includes(lang.id)) {
-      return { success: false, output: '', stderr: '', error: `${lang.name} browser'da çalışır, ▶ butonunu kullanın.` };
+      return { success: false, output: '', stderr: '', error: `${lang.name} runs in the browser, use the ▶ button.` };
     }
-    return { success: false, output: '', stderr: '', error: `${lang.name} için Judge0 ID tanımlı değil.` };
+    return { success: false, output: '', stderr: '', error: `Judge0 ID is not defined for ${lang.name}.` };
   }
 
   try {
@@ -349,7 +349,7 @@ async function runWithJudge0(lang, code) {
 
     if (!response.ok) {
       const txt = await response.text();
-      return { success: false, output: '', stderr: '', error: `Judge0 API hatası (HTTP ${response.status}): ${txt}` };
+      return { success: false, output: '', stderr: '', error: `Judge0 API error (HTTP ${response.status}): ${txt}` };
     }
 
     const data = await response.json();
@@ -359,11 +359,11 @@ async function runWithJudge0(lang, code) {
     const statusId      = data.status?.id ?? 0;
     const statusDesc    = data.status?.description || '';
 
-    if (statusId === 6) return { success: false, output: stdout, stderr: '', error: compileOutput || 'Derleme hatası' };
+    if (statusId === 6) return { success: false, output: stdout, stderr: '', error: compileOutput || 'Compile error' };
     if (statusId >= 7 && statusId <= 14) return { success: false, output: stdout, stderr: '', error: stderr || compileOutput || statusDesc };
 
     return { success: true, output: stdout, stderr, error: null };
   } catch (err) {
-    return { success: false, output: '', stderr: '', error: `Bağlantı hatası: ${err.message}` };
+    return { success: false, output: '', stderr: '', error: `Connection error: ${err.message}` };
   }
 }
