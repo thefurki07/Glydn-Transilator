@@ -1,18 +1,18 @@
 /* ══════════════════════════════════════════════════════════════
-   translate.js — Çeviri + Judge0 ile otomatik analiz
-   1. Groq → saf kod çevirisi
-   2. Judge0 → otomatik çalıştır, sonuca göre badge ver
-   Bağımlılık: srcLang, tgtLang, updateLineNums, runWithJudge0,
+   translate.js — Translation + automatic analysis with Judge0
+   1. Groq → pure code translation
+   2. Judge0 → auto-run, give badges based on result
+   Dependency: srcLang, tgtLang, updateLineNums, runWithJudge0,
                addDebugLog, translations, currentLang
 ══════════════════════════════════════════════════════════════ */
 
 const GROQ_MODEL = 'openai/gpt-oss-120b';
 
-// Yerel test için geçici Groq API Key (Localhost dışındaki canlı ortamda proxy kullanılır)
+// Temporary Groq API Key for local testing (proxy is used in live environment outside Localhost)
 const LOCAL_GROQ_API_KEY = '';
 
 async function groqRequest(messages) {
-  // Çalışılan ortamı tespit et (Localhost/Dosya mı yoksa Canlı Sunucu mu?)
+  // Detect the running environment (Localhost/File or Live Server?)
   const isLocalhost = Boolean(
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1' ||
@@ -22,7 +22,7 @@ async function groqRequest(messages) {
   let response;
 
   if (isLocalhost) {
-    // ── YEREL ORTAM (Doğrudan Groq API) ──────────────────────────
+    // ── LOCAL ENVIRONMENT (Direct Groq API) ──────────────────────
     response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -37,7 +37,7 @@ async function groqRequest(messages) {
       })
     });
   } else {
-    // ── NETLIFY CANLI ORTAM (Netlify Function Proxy) ───────────
+    // ── NETLIFY LIVE ENVIRONMENT (Netlify Function Proxy) ───────
     response = await fetch('/.netlify/functions/api-proxy', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -53,23 +53,23 @@ async function groqRequest(messages) {
     });
   }
 
-  // 1. Yanıtı ham metin olarak al (Empty JSON hatasını önlemek için)
+  // 1. Get the response as raw text (to avoid Empty JSON error)
   const textResponse = await response.text();
 
-  // 2. Eğer yanıt gövdesi boşsa fırlat
+  // 2. If the response body is empty, throw
   if (!textResponse || !textResponse.trim()) {
-    throw new Error('Sunucudan boş yanıt döndü (Netlify Function zaman aşımına uğramış veya local istek başarısız olmuş olabilir).');
+    throw new Error('Server returned an empty response (Netlify Function may have timed out or local request failed).');
   }
 
-  // 3. Güvenli şekilde JSON parse et
+  // 3. Safely parse JSON
   let data;
   try {
     data = JSON.parse(textResponse);
   } catch (e) {
-    throw new Error(`Geçersiz yanıt biçimi alındı: ${textResponse.substring(0, 80)}...`);
+    throw new Error(`Invalid response format received: ${textResponse.substring(0, 80)}...`);
   }
 
-  // 4. HTTP hata kontrolü
+  // 4. HTTP error check
   if (!response.ok) {
     throw new Error(data.error?.message || `HTTP ${response.status}`);
   }
@@ -92,7 +92,7 @@ async function runTranslation() {
   hideTranslationWarning();
 
   try {
-    // ── AŞAMA 1: Groq ile saf kod çevirisi ─────────────────
+    // ── STAGE 1: Pure code translation with Groq ───────────
     const wrapperNotes = {
       rust:    'IMPORTANT: Always wrap code in fn main() { } if not already present.',
       java:    'IMPORTANT: Always wrap code in public class Main { public static void main(String[] args) { } }',
@@ -120,9 +120,9 @@ async function runTranslation() {
     const cleanCode = translatedCode.replace(/```\w*\n?/g, '').replace(/```/g, '').trim();
     tgt.value = cleanCode || (translations[currentLang]?.translateEmpty || '// Translation result was empty.');
     updateLineNums('tgt');
-    document.getElementById('tgtLines').textContent = cleanCode.split('\n').length + ' satır';
+    document.getElementById('tgtLines').textContent = cleanCode.split('\n').length + ' lines';
 
-    // ── AŞAMA 2: Judge0 ile otomatik test & badge ───────────
+    // ── STAGE 2: Auto test & badge with Judge0 ─────────────
     showTestButton();
     showTranslationWarning();
     await autoAnalyzeWithJudge0(cleanCode);
@@ -134,12 +134,12 @@ async function runTranslation() {
   btn.classList.remove('loading');
 }
 
-/* ── Judge0 ile otomatik analiz ──────────────────────────── */
+/* ── Automatic analysis with Judge0 ──────────────────────── */
 async function autoAnalyzeWithJudge0(code) {
-  // JS, TS, Python, Lua browser'da çalışıyor — Judge0 analizi gerekmez
+  // JS, TS, Python, Lua run in browser — no Judge0 analysis needed
   const browserLangs = ['javascript', 'typescript', 'python', 'lua'];
   if (browserLangs.includes(tgtLang.id)) {
-    // Browser dilleri için tüm satırlar ✅ (gerçek test terminalde yapılır)
+    // All lines ✅ for browser languages (real test is done in terminal)
     applyBadgesToAllLines('✅');
     return;
   }
@@ -176,29 +176,29 @@ async function autoAnalyzeWithJudge0(code) {
     const errorText     = (compileOutput + '\n' + stderr).trim();
 
     if (statusId === 3) {
-      // Başarılı — tüm satırlar ✅
+      // Success — all lines ✅
       applyBadgesToAllLines('✅');
 
     } else if (statusId === 6) {
-      // Derleme hatası — hatalı satırları bul, gerisine ⚠️
+      // Compile error — find faulty lines, ⚠️ for the rest
       applyBadgesFromError(code, errorText, 'compile');
 
     } else if (statusId >= 7 && statusId <= 14) {
-      // Runtime hatası — tüm satırlar ⚠️ (derlendi ama çalışmadı)
+      // Runtime error — all lines ⚠️ (compiled but did not run)
       applyBadgesToAllLines('⚠️');
 
     } else {
-      // Bilinmeyen durum — ⚠️
+      // Unknown status — ⚠️
       applyBadgesToAllLines('⚠️');
     }
 
   } catch (err) {
-    // Bağlantı hatası — badge verme, sessiz geç
-    console.warn('Judge0 analiz hatası:', err.message);
+    // Connection error — do not give badge, silently skip
+    console.warn('Judge0 analysis error:', err.message);
   }
 }
 
-/* ── Badge yardımcıları ──────────────────────────────────── */
+/* ── Badge helpers ───────────────────────────────────────── */
 function applyBadgesToAllLines(emoji) {
   const code = document.getElementById('tgtCode').value;
   const lineCount = code.split('\n').length;
@@ -212,11 +212,11 @@ function applyBadgesFromError(code, errorText, type) {
   const lines = code.split('\n');
   const totalLines = lines.length;
 
-  // Hata satırlarını parse et (örn: "main.rs:5:3", "Main.java:3:", ":5:")
+  // Parse error lines (e.g. "main.rs:5:3", "Main.java:3:", ":5:")
   const errorLines = new Set();
   const patterns = [
-    /[:\s](\d+):\d+/g,   // dosya:satır:kolon
-    /[:\s](\d+):/g,       // dosya:satır:
+    /[:\s](\d+):\d+/g,   // file:line:column
+    /[:\s](\d+):/g,       // file:line:
     /line\s+(\d+)/gi,     // line 5
     /\[(\d+)\]/g,         // [5]
   ];
@@ -235,15 +235,15 @@ function applyBadgesFromError(code, errorText, type) {
     if (errorLines.has(i)) {
       lineAnalysis[i] = '❌';
     } else if (lines[i-1].trim() === '' || lines[i-1].trim().startsWith('//') || lines[i-1].trim().startsWith('#')) {
-      lineAnalysis[i] = '✅'; // boş satır veya yorum
+      lineAnalysis[i] = '✅'; // empty line or comment
     } else {
-      lineAnalysis[i] = '⚠️'; // hatalı değil ama emin değiliz
+      lineAnalysis[i] = '⚠️'; // not faulty but we are not sure
     }
   }
   updateLineNums('tgt');
 }
 
-/* ── Uyarı notu ──────────────────────────────────────────── */
+/* ── Warning note ────────────────────────────────────────── */
 function showTranslationWarning() {
   let warn = document.getElementById('translationWarning');
   if (!warn) {
@@ -254,7 +254,7 @@ function showTranslationWarning() {
     if (codeWrap) codeWrap.insertAdjacentElement('afterend', warn);
   }
   const t = translations[currentLang];
-  warn.textContent = t.translationWarning || '⚠️ AI çeviriler %100 doğru olmayabilir. Önemli kodları kontrol edin. Çok hata alırsanız tekrar deneyin.';
+  warn.textContent = t.translationWarning || '⚠️ AI translations may not be 100% accurate. Review important code. If you get many errors, try again.';
   warn.style.display = 'block';
 }
 
@@ -263,14 +263,14 @@ function hideTranslationWarning() {
   if (warn) warn.style.display = 'none';
 }
 
-/* ── Test Et butonu ──────────────────────────────────────── */
+/* ── Test button ─────────────────────────────────────────── */
 function showTestButton() {
   let testBtn = document.getElementById('testCodeBtn');
   if (!testBtn) {
     testBtn = document.createElement('button');
     testBtn.id        = 'testCodeBtn';
     testBtn.className = 'action-btn test-btn';
-    testBtn.title     = 'Judge0 ile Test Et';
+    testBtn.title     = 'Test with Judge0';
     testBtn.innerHTML = `<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
       <path d="M3 2.5l8 4.5-8 4.5z" stroke-width="1.5" fill="currentColor" stroke="none"/>
     </svg>`;
@@ -284,7 +284,7 @@ async function testTranslatedCode() {
   const rawCode = document.getElementById('tgtCode').value.trim();
   if (!rawCode) return;
 
-  // Browser'da çalışan diller için toggleRun kullan
+  // Use toggleRun for languages running in browser
   const browserLangs = ['javascript', 'typescript', 'python', 'lua'];
   if (browserLangs.includes(tgtLang.id)) {
     toggleRun('tgt');
@@ -321,7 +321,7 @@ async function testTranslatedCode() {
   }, 300);
 }
 
-/* ── b64 yardımcıları (runners.js'te de var, burada lokal) ── */
+/* ── b64 helpers (also in runners.js, local here) ────────── */
 function b64Encode(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
